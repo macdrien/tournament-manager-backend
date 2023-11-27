@@ -1,15 +1,16 @@
 package fr.sidranie.endpoints;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.resteasy.reactive.RestCookie;
 import org.jboss.resteasy.reactive.server.jaxrs.ResponseBuilderImpl;
 
 import fr.sidranie.auth.Credential;
+import fr.sidranie.dao.SessionDao;
 import fr.sidranie.dao.UserDao;
 import fr.sidranie.endpoints.dto.CreateUser;
 import fr.sidranie.entities.Session;
@@ -23,7 +24,9 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.NewCookie.SameSite;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -37,6 +40,9 @@ public class UserController {
 
     @Inject
     SessionService sessionService;
+
+    @Inject
+    SessionDao sessionDao;
 
     @ConfigProperty(name = "session.expiration")
     Long expiration;
@@ -109,5 +115,15 @@ public class UserController {
             .cookie(sessionCookie)
             .status(Status.CREATED)
             .build();
+    }
+
+    @POST
+    @Path("/logout")
+    public Response logout(@RestCookie("session") Cookie cookie) {
+        Log.info(cookie);
+        Session session = sessionDao.findById(cookie.getValue());
+        sessionDao.delete(session);
+
+        return Response.ok().build();
     }
 }
