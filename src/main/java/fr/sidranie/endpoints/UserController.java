@@ -13,6 +13,7 @@ import fr.sidranie.auth.Credential;
 import fr.sidranie.dao.SessionDao;
 import fr.sidranie.dao.UserDao;
 import fr.sidranie.endpoints.dto.CreateUser;
+import fr.sidranie.endpoints.filters.annotations.Authenticated;
 import fr.sidranie.entities.Session;
 import fr.sidranie.entities.User;
 import fr.sidranie.services.SessionService;
@@ -58,6 +59,14 @@ public class UserController {
         return userDao.findById(id);
     }
 
+    @GET
+    @Path("/me")
+    @Authenticated
+    public User findMe(@RestCookie("session") Cookie cookie) {
+        Session session = sessionDao.findById(cookie.getValue());
+        return session.user;
+    }
+
     @POST
     @Path("/login")
     public Response login(Credential credential) {
@@ -69,7 +78,7 @@ public class UserController {
         NewCookie sessionCookie = new NewCookie.Builder("session")
                 .sameSite(SameSite.STRICT)
                 .value(session.id)
-                .expiry(new Date(session.creation.plusMillis(expiration).toEpochMilli()))
+                .expiry(new Date(session.creation.plusSeconds(expiration).toEpochMilli()))
                 .build();
 
         ResponseBuilder builder = Response.ok(userOptional.get()).cookie(sessionCookie);
@@ -119,6 +128,8 @@ public class UserController {
 
     @POST
     @Path("/logout")
+    @Authenticated
+    @Transactional
     public Response logout(@RestCookie("session") Cookie cookie) {
         Log.info(cookie);
         Session session = sessionDao.findById(cookie.getValue());
