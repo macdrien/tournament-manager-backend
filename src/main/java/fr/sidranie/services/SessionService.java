@@ -6,16 +6,25 @@ import java.util.UUID;
 import fr.sidranie.dao.SessionDao;
 import fr.sidranie.entities.Session;
 import fr.sidranie.entities.User;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+/**
+ * Service managing sessions.
+ */
 @ApplicationScoped
 public class SessionService {
     @Inject
     SessionDao sessionDao;
 
+    /**
+     * Initialize a session for the given user.
+     * The UUID is generated via @see java.util.UUID
+     * 
+     * @param user The user for who a session is needed.
+     * @return The created session.
+     */
     @Transactional
     public Session initializeSessionForUser(User user) {
         Session session = new Session();
@@ -24,8 +33,6 @@ public class SessionService {
         session.creation = Instant.now();
 
         sessionDao.persist(session);
-
-        Log.info(sessionDao.findById(session.id));
 
         return session;
     }

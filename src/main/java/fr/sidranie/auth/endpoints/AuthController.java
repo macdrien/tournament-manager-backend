@@ -34,9 +34,19 @@ public class AuthController {
     @Inject
     UserService userService;
 
+    /**
+     * The delay, in second, of session cookie validity
+     */
     @ConfigProperty(name = "session.expiration")
     Long expiration;
 
+    /**
+     * Login a user. It will initialize the session and returns it in a cookie named session.
+     * 
+     * @param credential The credential identifying the user to login
+     * @return An HTTP response with the session cookie.
+     * @throws NotFoundException If the credential doesn't match any user
+     */
     @POST
     @Path("/login")
     public Response login(Credential credential) throws NotFoundException {
@@ -47,6 +57,14 @@ public class AuthController {
         return Response.ok(user).cookie(sessionCookie).build();
     }
 
+    /**
+     * Regsiter a new user in the system.
+     * After the user creation, it will initialize a session for him and returns it in the session cookie as for the login endpoint but with the user entity in the Response body.
+     * 
+     * @param newUser The user to create
+     * @return An HTTP response with the created user and the session body if registration succeed.
+     *         Else (validation error mainly), it will raise an error and returns the corresponding HTTP code.
+     */
     @POST
     @Path("/register")
     @Transactional
@@ -70,6 +88,12 @@ public class AuthController {
             .build();
     }
 
+    /**
+     * Logout a user by deleting the session.
+     * 
+     * @param cookie The session cookie identifying the user
+     * @return An empty OK Reponse
+     */
     @POST
     @Path("/logout")
     @Authenticated
@@ -78,6 +102,12 @@ public class AuthController {
         return Response.ok().build();
     }
 
+    /**
+     * Create the session cookie using the session.
+     * 
+     * @param session The session for which we want the cookie
+     * @return The created cookie
+     */
     private NewCookie createCookieForSession(Session session) {
         return new NewCookie.Builder("session")
                 .sameSite(SameSite.STRICT)
@@ -86,6 +116,12 @@ public class AuthController {
                 .build();
     }
 
+    /**
+     * Validate the user to create by checking the given fields.
+     * 
+     * @param newUser The user to create.
+     * @return A list of errors in the user creation. The list will be empty if the user object is valid.
+     */
     private List<String> validateUserToCreate(CreateUser newUser) {
         List<String> errors = new ArrayList<>();
         if (newUser.username == null || newUser.username.length() < 3) {

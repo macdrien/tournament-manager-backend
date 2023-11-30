@@ -6,5 +6,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SessionDao implements PanacheRepositoryBase<Session, String> {
-
+    // Empty body
 }

@@ -20,6 +20,10 @@ public class AuthenticatedFilter implements ContainerRequestFilter {
     @Inject
     SessionDao sessionDao;
 
+    /**
+     * Check if the session cookie is present, valid, and always linked to a valid user.
+     * Else, launch abortWith method with the UNAUTHORIZED error code.
+     */
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
             Map<String, Cookie> cookies = requestContext.getCookies();
