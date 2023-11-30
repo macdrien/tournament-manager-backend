@@ -1,4 +1,4 @@
-package fr.sidranie.endpoints.filters.annotations;
+package fr.sidranie.auth.filters.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

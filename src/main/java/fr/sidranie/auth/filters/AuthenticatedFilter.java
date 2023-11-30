@@ -1,10 +1,10 @@
-package fr.sidranie.endpoints.filters;
+package fr.sidranie.auth.filters;
 
 import java.io.IOException;
 import java.util.Map;
 
+import fr.sidranie.auth.filters.annotations.Authenticated;
 import fr.sidranie.dao.SessionDao;
-import fr.sidranie.endpoints.filters.annotations.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
