@@ -82,7 +82,7 @@ public class AuthController {
         return new NewCookie.Builder("session")
                 .sameSite(SameSite.STRICT)
                 .value(session.id)
-                .expiry(new Date(session.creation.plusMillis(expiration).toEpochMilli()))
+                .expiry(new Date(session.creation.plusSeconds(expiration).toEpochMilli()))
                 .build();
     }
 
