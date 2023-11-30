@@ -29,4 +29,10 @@ public class SessionService {
 
         return session;
     }
+
+    @Transactional
+    public void deleteSession(String sessionId) {
+        Session session = sessionDao.findById(sessionId);
+        sessionDao.delete(session);
+    }
 }
