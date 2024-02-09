@@ -30,18 +30,10 @@ public class Role extends PanacheEntityBase {
   public String name;
 
   @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(name = "Roles_Scopes",
-    joinColumns =
-      @JoinColumn(name="id_role",
-        referencedColumnName = "id"),
-    inverseJoinColumns =
-      @JoinColumn(name="id_scope",
-        referencedColumnName = "id"),
-    uniqueConstraints =
-      @UniqueConstraint(columnNames={"id_role", "id_scope"})
-  )
-  @JsonIgnoreProperties("scopes")
-  public Set<Scope> scopes;
+  @JoinTable(name = "Roles_Permissions", joinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_scope", referencedColumnName = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+      "id_role", "id_permission" }))
+  @JsonIgnoreProperties("permissions")
+  public Set<Permission> permissions;
 
   @ManyToMany(mappedBy = "roles")
   public List<User> users;
